@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# ANSI escape code for yellow color
+YELLOW='\e[93m'
+# ANSI escape code for light blue color
+LIGHT_BLUE='\e[94m'
+# ANSI escape code for green color
+GREEN='\e[92m'
+# ANSI escape code to reset color
+RESET='\e[0m'
+
+# Send Ctrl+Shift+X at the beginning
+xdotool keydown ctrl shift x
+xdotool keyup ctrl shift x
+
+# Capture the output of the command
+output=$(printf "\n\n(Rows,Cols)\n ";printf '\e[1;91m%-6s\e[m' $(stty size);printf "\n\nTerm= \e[91m$TERM\e[0m\n\n" | grep -v '^$' | awk '{$1=$1};1')
+
+# Extract the ROW and COLUMN values
+ROW=$(echo "$output" | awk '/Rows,Cols/{getline; print $1}')
+COLUMN=$(echo "$output" | awk '/Rows,Cols/{getline; print $2}')
+
+# Print the captured output
+echo -e "${LIGHT_BLUE}$(echo cHl0aG9uMyAtYyAiaW1wb3J0IHB0eTtwdHkuc3Bhd24oJy9iaW4vYmFzaCcpIgo= | base64 -d)${RESET}"
+echo -e "${GREEN}$(echo c3R0eSByYXcgLWVjaG87IGZnCg== | base64 -d)${RESET}"
+echo -e "${YELLOW}$(echo ZXhwb3J0IFNIRUxMPWJhc2gK | base64 -d)${RESET}"
+echo -e "${YELLOW}$(echo ZXhwb3J0IFRFUk09eHRlcm0tMjU2Y29sb3IK | base64 -d)${RESET}"
+
+# Print stty command in yellow
+echo -e "${YELLOW}$(echo "stty ${YELLOW}rows $ROW ${YELLOW}columns $COLUMN")${RESET}"
+
+# Print the Term without lines containing 'alacritty'
+printf "$TERM" | grep -v 'Term= alacritty' | grep -v 'alacritty' | awk '{$1=$1};1'
+
+# Send Ctrl+Shift+X at the end
+xdotool keydown ctrl shift x
+xdotool keyup ctrl shift x
